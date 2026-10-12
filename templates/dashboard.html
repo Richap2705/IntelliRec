@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IntelliRec — Content Intelligence Workspace</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Toast Notification -->
+  <div id="toast"></div>
+
+  <!-- Main Application Shell -->
+  <div class="app-shell" id="appShell">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo-badge">IR</div>
+        <span>IntelliRec</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sideAvatar">?</div>
+        <div class="user-info">
+          <b id="sideName">Guest User</b>
+          <small id="sideRole">USER</small>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="home" onclick="loadView('home')">
+          <span class="icon">⌂</span>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-view="feed" onclick="loadView('feed')">
+          <span class="icon">✦</span>
+          <span>For You</span>
+        </button>
+        <button class="nav-item" data-view="trending" onclick="loadView('trending')">
+          <span class="icon">↗</span>
+          <span>Trending</span>
+        </button>
+        <button class="nav-item" data-view="saved" onclick="loadView('saved')">
+          <span class="icon">🔖</span>
+          <span>Saved</span>
+        </button>
+        <button class="nav-item" data-view="activity" onclick="loadView('activity')">
+          <span class="icon">◷</span>
+          <span>Activity</span>
+        </button>
+        <button class="nav-item" data-view="nlp" onclick="loadView('nlp')">
+          <span class="icon">🧪</span>
+          <span>NLP Lab</span>
+        </button>
+        <button class="nav-item" data-view="profile" onclick="loadView('profile')">
+          <span class="icon">◎</span>
+          <span>Profile</span>
+        </button>
+        <button class="nav-item" id="adminNavItem" data-view="admin" onclick="loadView('admin')" style="display: none;">
+          <span class="icon">▦</span>
+          <span>Admin Center</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="toggleTheme()">
+          <span class="icon">🌓</span>
+          <span>Toggle Theme</span>
+        </button>
+        <button onclick="logout()" style="color: #fb7185;">
+          <span class="icon">🚪</span>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="main-viewport">
+      
+      <!-- Top Action Bar -->
+      <header class="top-bar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="theme-toggle-btn mobile-menu-btn" onclick="toggleSidebar()" style="display: none;">☰</button>
+          <div class="page-title">
+            <h1 id="pageGreeting">Welcome to IntelliRec</h1>
+            <p id="pageSubhead">Personalized hybrid recommendations & text intelligence</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input id="searchInput" placeholder="Search topics, keywords..." onkeydown="if(event.key==='Enter')handleSearch()">
+          </div>
+          <button class="btn sm ghost" onclick="loadView('nlp')">🧪 NLP Lab</button>
+          <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+        </div>
+      </header>
+
+      <!-- Category Filter Pills -->
+      <div class="category-chips" id="categoryChips">
+        <button class="category-chip active" onclick="filterCategory('All')">All Topics</button>
+        <button class="category-chip" onclick="filterCategory('AI')">AI & LLMs</button>
+        <button class="category-chip" onclick="filterCategory('Data Science')">Data Science</button>
+        <button class="category-chip" onclick="filterCategory('Machine Learning')">Machine Learning</button>
+        <button class="category-chip" onclick="filterCategory('Cloud')">Cloud Computing</button>
+        <button class="category-chip" onclick="filterCategory('Cybersecurity')">Cybersecurity</button>
+        <button class="category-chip" onclick="filterCategory('Social Analytics')">Social Analytics</button>
+        <button class="category-chip" onclick="filterCategory('NLP')">NLP</button>
+        <button class="category-chip" onclick="filterCategory('Enterprise Systems')">Enterprise Systems</button>
+      </div>
+
+      <!-- ============================================================
+           VIEW 1: OVERVIEW / HOME
+           ============================================================ -->
+      <section id="view-home" class="view-panel">
+        <div class="hero-banner">
+          <div>
+            <h2>Precision Recommendations, Powered by AI</h2>
+            <p>
+              Your personal feed combines Content TF-IDF vectors, Collaborative user signals,
+              real-time Popularity, and explicit feedback into explainable rankings.
+            </p>
+          </div>
+          <div class="banner-stats">
+            <div class="banner-stat-box">
+              <b id="homeModelType">HYBRID</b>
+              <small>5 Active Signals</small>
+            </div>
+            <div class="banner-stat-box">
+              <b id="homeUserInterestsCount">0</b>
+              <small>Your Interests</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-label">Indexed Content</div>
+              <div class="kpi-val" id="kpiContentCount">—</div>
+            </div>
+            <div class="kpi-icon">📚</div>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-label">Active Signals</div>
+              <div class="kpi-val">5</div>
+            </div>
+            <div class="kpi-icon">⚡</div>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-label">Profile Affinity</div>
+              <div class="kpi-val" id="kpiAffinity">High</div>
+            </div>
+            <div class="kpi-icon">🎯</div>
+          </div>
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-label">NLP Topics</div>
+              <div class="kpi-val" id="kpiTopicCount">5</div>
+            </div>
+            <div class="kpi-icon">🧠</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <h2>Top Recommended For You</h2>
+            <p>Personalized based on your interests and engagement history.</p>
+          </div>
+          <button class="btn sm ghost" onclick="loadView('feed')">View Full Feed →</button>
+        </div>
+        <div class="content-grid" id="homeFeedGrid"></div>
+
+        <div class="section-header" style="margin-top: 40px;">
+          <div>
+            <h2>Trending Intelligence</h2>
+            <p>High-velocity content gaining momentum across the network.</p>
+          </div>
+          <button class="btn sm ghost" onclick="loadView('trending')">View All Trending →</button>
+        </div>
+        <div class="content-grid" id="homeTrendingGrid"></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 2: FOR YOU (PERSONALIZED FEED)
+           ============================================================ -->
+      <section id="view-feed" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>For You — Personalized Feed</h2>
+            <p>Transparent recommendations ranked by our 5-signal hybrid algorithm.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <select id="feedTypeFilter" onchange="loadFeed()" style="padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-size: 13px;">
+              <option value="All">All Formats</option>
+              <option value="article">Articles Only</option>
+              <option value="video">Videos Only</option>
+              <option value="image">Visuals / Images</option>
+            </select>
+          </div>
+        </div>
+        <div class="content-grid" id="feedGrid"></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 3: TRENDING INTELLIGENCE
+           ============================================================ -->
+      <section id="view-trending" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>Trending Intelligence Leaderboard</h2>
+            <p>Top velocity items ranked by audience engagement, shares, and recency momentum.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="trendingGrid"></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 4: SAVED BOOKMARKS
+           ============================================================ -->
+      <section id="view-saved" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>Saved Bookmarks</h2>
+            <p>Articles and media items you bookmarked for later study.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="savedGrid"></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 5: MY ACTIVITY TIMELINE
+           ============================================================ -->
+      <section id="view-activity" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>My Activity Timeline</h2>
+            <p>Real chronological log of your views, likes, bookmarks, and comments.</p>
+          </div>
+        </div>
+        <div id="activityTimeline" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 6: NLP SENTIMENT & TEXT MINING LAB
+           ============================================================ -->
+      <section id="view-nlp" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>NLP Sentiment & Text Mining Laboratory</h2>
+            <p>Interactive testing sandbox: VADER Sentiment scoring, TF-IDF n-grams, and NMF Topic classification.</p>
+          </div>
+        </div>
+
+        <div class="nlp-lab-grid">
+          <div class="nlp-input-card">
+            <h3 style="font-size: 16px; font-weight: 750; margin-bottom: 12px;">Input Text or Headline</h3>
+            <textarea id="nlpInputText" placeholder="Paste an article paragraph, comment, or headline here to analyze its sentiment polarity, keywords, and semantic topic..."></textarea>
+            
+            <div class="sample-prompts-row">
+              <span style="font-size: 12px; color: var(--text-muted); align-self: center;">Try sample:</span>
+              <button class="sample-btn" onclick="setNlpSample('positive')">Positive AI Review</button>
+              <button class="sample-btn" onclick="setNlpSample('neutral')">Architecture Docs</button>
+              <button class="sample-btn" onclick="setNlpSample('critical')">Critical Benchmark</button>
+            </div>
+
+            <button class="btn full" onclick="runNlpAnalysis()">🔬 Analyze Intelligence</button>
+          </div>
+
+          <div class="nlp-results-card" id="nlpResultsCard">
+            <h3 style="font-size: 16px; font-weight: 750; margin-bottom: 14px;">ASTMA Analytical Breakdown</h3>
+            <div id="nlpResultsContent" style="color: var(--text-muted); font-size: 14px;">
+              Enter text on the left and click "Analyze Intelligence" to extract real-time VADER sentiment and TF-IDF features.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 7: PROFILE & INTERESTS
+           ============================================================ -->
+      <section id="view-profile" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>User Profile & Content Affinity</h2>
+            <p>Manage your profile interests and customize your recommendation weights.</p>
+          </div>
+        </div>
+
+        <div class="table-panel" style="margin-bottom: 24px;">
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="user-avatar" id="profileBigAvatar" style="width: 72px; height: 72px; font-size: 28px;">?</div>
+            <div>
+              <h2 id="profileFullName" style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">User Name</h2>
+              <p id="profileEmailText" style="color: var(--text-muted); font-size: 14px; margin-bottom: 8px;">user@example.com</p>
+              <span class="pill" id="profileRoleBadge">USER</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-panel">
+          <h3>Your Active Interests</h3>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
+            Click any tag to toggle it, or type custom tags below. These interests directly calibrate your Content-based similarity vectors.
+          </p>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;" id="availableInterestsCloud"></div>
+
+          <div style="display: flex; gap: 10px; max-width: 500px; margin-bottom: 16px;">
+            <input id="customInterestInput" placeholder="Add custom interest..." style="flex: 1; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-size: 13.5px;" onkeydown="if(event.key==='Enter')addCustomInterest()">
+            <button class="btn sm" onclick="addCustomInterest()">+ Add Tag</button>
+          </div>
+
+          <button class="btn" onclick="saveUserInterests()">Save & Recalibrate Engine</button>
+        </div>
+
+        <div class="table-panel">
+          <h3>Security & Compliance Governance</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-sm); font-size: 13px;">
+              <b>✓ PBKDF2 Password Encryption:</b> 210,000 hashing rounds with cryptographic salts
+            </div>
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-sm); font-size: 13px;">
+              <b>✓ Stateless JWT Authentication:</b> Secure Bearer tokens with expiration enforcement
+            </div>
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-sm); font-size: 13px;">
+              <b>✓ Role-Based Access Control:</b> Strict route isolation for ADMIN and USER tiers
+            </div>
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-sm); font-size: 13px;">
+              <b>✓ Privacy First:</b> Behavioral telemetry mapped strictly to pseudonymous IDs
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           VIEW 8: ADMIN COMMAND CENTER
+           ============================================================ -->
+      <section id="view-admin" class="view-panel hidden">
+        <div class="section-header">
+          <div>
+            <h2>Intelligence Command Center</h2>
+            <p>ASTMA Telemetry, System Health, and Enterprise Content Management</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn sm ghost" id="retrainBtn" onclick="retrainEngine()">⚡ Retrain Engine</button>
+            <button class="btn sm" onclick="openAddContentModal()">+ Add Content</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="adminKpisGrid"></div>
+
+        <!-- Charts Grid -->
+        <div class="admin-analytics-grid">
+          <div class="chart-card">
+            <h3>Social Engagement by Category (ASTMA)</h3>
+            <div class="chart-wrap">
+              <canvas id="chartSocial"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Comment Sentiment Distribution</h3>
+            <div class="chart-wrap">
+              <canvas id="chartSentiment"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Media Performance Metrics</h3>
+            <div class="chart-wrap">
+              <canvas id="chartMedia"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Discovered NMF Semantic Topics</h3>
+            <div id="adminTopicsList" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 250px;"></div>
+          </div>
+        </div>
+
+        <!-- Content Management Table -->
+        <div class="table-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3>Content Library Management</h3>
+            <button class="btn sm" onclick="openAddContentModal()">+ Add Article / Video</button>
+          </div>
+          <div class="custom-table-wrap">
+            <table class="custom-table" id="adminContentTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Type</th>
+                  <th>Views</th>
+                  <th>Likes</th>
+                  <th>Sentiment</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminContentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- User Accounts Table -->
+        <div class="table-panel">
+          <h3>Registered System Users</h3>
+          <div class="custom-table-wrap">
+            <table class="custom-table" id="adminUsersTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Registered</th>
+                  <th>Toggle Status</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================
+       ARTICLE DETAIL & READER MODAL
+       ============================================================ -->
+  <div class="modal-overlay" id="articleModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div id="modalCategoryBadge" class="pill">CATEGORY</div>
+        <button class="modal-close-btn" onclick="closeArticleModal()">✕</button>
+      </div>
+      
+      <div class="modal-body" id="modalArticleBody">
+        <img id="modalHeroImg" class="modal-hero-img" src="" alt="Article Banner" style="display: none;">
+        <h2 id="modalArticleTitle" class="modal-title">Article Title</h2>
+        
+        <div class="modal-meta-row">
+          <span id="modalArticleAuthor">By Author</span>
+          <span>•</span>
+          <span id="modalArticleDate">Date</span>
+          <span>•</span>
+          <span id="modalArticleReadTime">3 min read</span>
+          <span>•</span>
+          <div id="modalSentimentBadge" class="sentiment-badge">Neutral</div>
+        </div>
+
+        <div class="modal-content-prose" id="modalArticleContent"></div>
+
+        <!-- Modal Explainability Panel -->
+        <div class="explain-panel" id="modalExplainPanel">
+          <h4>🧠 Why this recommendation was ranked for you</h4>
+          <div class="signals-breakdown-grid" id="modalSignalsGrid"></div>
+          <ul id="modalReasonsList" style="padding-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;"></ul>
+        </div>
+
+        <!-- Action Bar Inside Modal -->
+        <div class="card-actions" style="margin-bottom: 24px;">
+          <button class="card-btn" id="modalLikeBtn" onclick="handleModalLike()">❤️ Like</button>
+          <button class="card-btn" id="modalSaveBtn" onclick="handleModalSave()">🔖 Save</button>
+          <button class="card-btn" onclick="handleShareCurrentArticle()">↗ Share</button>
+          <div style="margin-left: auto; display: flex; gap: 8px;">
+            <button class="card-btn" onclick="sendFeedback('liked')" title="More like this">👍 Interested</button>
+            <button class="card-btn" onclick="sendFeedback('disliked')" title="Less like this">👎 Not Interested</button>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h3>Community Discussions & Analysis</h3>
+          <div class="comment-input-box">
+            <textarea id="newCommentInput" placeholder="Share your insights or question on this topic..."></textarea>
+            <button class="btn" style="align-self: flex-end;" onclick="submitComment()">Post Comment</button>
+          </div>
+          <div class="comments-list" id="modalCommentsList"></div>
+        </div>
+
+        <!-- Similar Content Strip -->
+        <div style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 24px;">
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;">Related Intelligence & Similar Topics</h3>
+          <div class="content-grid" id="modalSimilarGrid" style="grid-template-columns: repeat(2, 1fr);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADMIN: ADD CONTENT MODAL
+       ============================================================ -->
+  <div class="modal-overlay" id="addContentModal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="font-size: 18px; font-weight: 800;">Publish New Content</h3>
+        <button class="modal-close-btn" onclick="closeAddContentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="event.preventDefault(); submitNewContent();">
+          <div class="form-group">
+            <label>Title *</label>
+            <input id="addTitle" placeholder="e.g. Distributed Consensus in Cloud Systems" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label>Category *</label>
+              <input id="addCategory" placeholder="e.g. Cloud" required>
+            </div>
+            <div class="form-group">
+              <label>Content Type *</label>
+              <select id="addType">
+                <option value="article">Article</option>
+                <option value="video">Video</option>
+                <option value="image">Image / Infographic</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label>Author</label>
+              <input id="addAuthor" placeholder="e.g. Dr. Jane Doe">
+            </div>
+            <div class="form-group">
+              <label>Image URL</label>
+              <input id="addImageUrl" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Article Body *</label>
+            <textarea id="addBody" rows="6" placeholder="Enter comprehensive content body..." required></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+            <button type="button" class="btn ghost" onclick="closeAddContentModal()">Cancel</button>
+            <button type="submit" class="btn">Publish to Library</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

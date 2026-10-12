@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IntelliRec — Web Content Intelligence & Recommendation Engine</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
+</head>
+<body class="landing-body">
+
+  <!-- Header Navigation -->
+  <nav class="landing-nav">
+    <div class="brand">
+      <div class="logo-badge">IR</div>
+      <span>IntelliRec</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#architecture">Architecture</a>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+      <a class="btn" href="/app">Launch Platform</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-text">
+      <span class="eyebrow">FINAL-YEAR INTEGRATED CAPSTONE PROJECT</span>
+      <h1>Discover content that <span>actually fits you.</span></h1>
+      <p>
+        IntelliRec combines natural language processing, collaborative behavioral filtering, 
+        and real-time social engagement telemetry into a 5-signal hybrid recommendation engine with explainable AI rationale.
+      </p>
+      <div class="hero-cta">
+        <a class="btn" href="/app" style="font-size: 15px; padding: 12px 24px;">Open Intelligence Workspace →</a>
+      </div>
+      <div style="font-size: 13px; color: var(--text-muted); display: flex; gap: 16px; align-items: center;">
+        <span>✓ ASTMA Analytics</span>
+        <span>✓ Hybrid Recommender</span>
+        <span>✓ Explainable AI</span>
+        <span>✓ Enterprise RBAC</span>
+      </div>
+    </div>
+
+    <!-- Live Architecture Interactive Card -->
+    <div class="hero-card" id="architecture">
+      <div class="card-badge">HYBRID RANKING ARCHITECTURE</div>
+      <h3>Multi-Signal Recommendation Formula</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        Every item score \(S(u, i)\) is dynamically ranked across 5 weighted dimensions:
+      </p>
+
+      <div class="signal-bar-wrap">
+        <div class="signal-header">
+          <span>1. Content & Interest Vector (TF-IDF Cosine)</span>
+          <b>40%</b>
+        </div>
+        <div class="signal-bar">
+          <div class="signal-fill" style="width: 40%;"></div>
+        </div>
+      </div>
+
+      <div class="signal-bar-wrap">
+        <div class="signal-header">
+          <span>2. Collaborative Filtering (Item-Item Affinity)</span>
+          <b>25%</b>
+        </div>
+        <div class="signal-bar">
+          <div class="signal-fill" style="width: 25%; background: linear-gradient(90deg, #6366f1, #06b6d4);"></div>
+        </div>
+      </div>
+
+      <div class="signal-bar-wrap">
+        <div class="signal-header">
+          <span>3. Platform Popularity & Velocity</span>
+          <b>15%</b>
+        </div>
+        <div class="signal-bar">
+          <div class="signal-fill" style="width: 15%; background: linear-gradient(90deg, #06b6d4, #10b981);"></div>
+        </div>
+      </div>
+
+      <div class="signal-bar-wrap">
+        <div class="signal-header">
+          <span>4. Recency & Freshness Decay</span>
+          <b>10%</b>
+        </div>
+        <div class="signal-bar">
+          <div class="signal-fill" style="width: 10%; background: linear-gradient(90deg, #10b981, #f59e0b);"></div>
+        </div>
+      </div>
+
+      <div class="signal-bar-wrap">
+        <div class="signal-header">
+          <span>5. Explicit User Feedback Slot</span>
+          <b>10%</b>
+        </div>
+        <div class="signal-bar">
+          <div class="signal-fill" style="width: 10%; background: linear-gradient(90deg, #f59e0b, #ec4899);"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 22px; padding: 12px; border-radius: var(--radius-sm); background: var(--bg-subtle); font-size: 12px; color: var(--text-muted);">
+        <b>Transparent XAI:</b> Transparent signal breakdown explanations are computed on-the-fly for every recommendation.
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Showcase Grid -->
+  <section class="features-grid" id="features">
+    <div class="feature-box">
+      <span class="feature-icon">📊</span>
+      <h4>ASTMA Analytics</h4>
+      <p>Social engagement ratios, VADER sentiment polarity, TF-IDF n-grams, and NMF topic modeling on all articles and comments.</p>
+    </div>
+    <div class="feature-box">
+      <span class="feature-icon">🧠</span>
+      <h4>Explainable AI (XAI)</h4>
+      <p>Clear, transparent mathematical and natural language explanations for every recommendation, preventing black-box opacity.</p>
+    </div>
+    <div class="feature-box">
+      <span class="feature-icon">🔒</span>
+      <h4>Enterprise Backend</h4>
+      <p>Stateless JWT authentication, PBKDF2 with 210,000 hashing rounds, role-based access control (USER/ADMIN), and clean layered REST APIs.</p>
+    </div>
+    <div class="feature-box">
+      <span class="feature-icon">📋</span>
+      <h4>ITPM Framework</h4>
+      <p>Complete project management governance including sprint tracking, risk mitigation matrices, and architecture deliverables.</p>
+    </div>
+  </section>
+
+  <!-- Quick Demo Access Banner -->
+  <section style="max-width: 1200px; margin: 0 auto 80px; padding: 0 24px;">
+    <div class="hero-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
+      <div>
+        <div class="card-badge">EVALUATION READY</div>
+        <h3 style="margin-bottom: 6px;">Pre-configured Demo Accounts Available</h3>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 0;">
+          Test with <b>Admin</b> privileges or pre-seeded user personas (Sarah & Alex) to experience instant personalization.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <a class="btn" href="/app">Launch IntelliRec Platform →</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('ir_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+    if (localStorage.getItem('ir_theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+  </script>
+</body>
+</html>
